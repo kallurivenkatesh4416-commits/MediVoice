@@ -5,6 +5,7 @@
 Submitted to the [Gemma 4 Good Hackathon](https://www.kaggle.com/competitions/gemma-4-good-hackathon) (Health + Digital Equity tracks).
 
 - **Kaggle notebook:** https://www.kaggle.com/code/kallurivenkatesh4416/medivoice-gemma-4-v19-lab-report
+- **GitHub repo:** https://github.com/kallurivenkatesh4416-commits/MediVoice
 - **License:** Apache 2.0 (see `LICENSE`)
 - **Deadline:** 2026-05-18
 
@@ -12,7 +13,9 @@ Submitted to the [Gemma 4 Good Hackathon](https://www.kaggle.com/competitions/ge
 
 Upload one or more phone photos of a CBC or CMP lab report. MediVoice produces a plain-English explanation at a sixth-grade reading level, classifies every value deterministically against the report's own reference range (with a curated fallback), cross-checks printed flags, and returns an urgency level (`routine` / `see_doctor_soon` / `er_now`) that cannot be overridden by free-form generation.
 
-Supports five output languages (English, Spanish, Hindi, French, German), large-print mode, and voice input with Whisper fallback.
+The notebook also includes a **voice assistant path**: users can speak a medical question or follow-up, the app transcribes the audio with Gemma-native audio when available or Whisper fallback when needed, applies the same emergency guardrails, and returns a calm structured response. This makes MediVoice usable as both a lab-report companion and a voice-first health literacy assistant.
+
+Supports five output languages (English, Spanish, Hindi, French, German), large-print mode, microphone/uploaded audio input, and Whisper fallback.
 
 ## Architecture
 
@@ -22,6 +25,8 @@ Four stages. Safety-critical decisions are pure Python, never LLM prose.
 2. **Structure** — Gemma 4 chat-template tool-calling produces schema-valid JSON.
 3. **Decide** — Pure-Python classification, escalation, flag-mismatch detection, and citations against published critical-value tables (Mayo Clinic Laboratories, URMC, Texas DSHS, Interpath).
 4. **Explain** — Gemma 4 prose grounded in the structured facts; deterministic fallback template in CPU smoke mode.
+
+The Gradio demo exposes this as separate **Lab Report**, **Voice Chat**, and **Eval Dashboard** flows so judges can test the image workflow, voice assistant behavior, and reproducibility evidence independently.
 
 ## Evaluation
 
@@ -45,21 +50,21 @@ Four stages. Safety-critical decisions are pure Python, never LLM prose.
 - `build_notebook_v19.py` — source of truth; emits the Kaggle notebook.
 - `medivoice_gemma4_v19_lab_report.ipynb` — generated notebook submitted to Kaggle.
 - `_validate_eval.py` — CPU-safe validator covering the deterministic, multilingual, and safe-failure layers.
-- `kaggle_v19_run/` — kernel metadata and staged notebook copy used for pushes.
-- `kaggle_output_*/medivoice_v19_outputs/` — sample export bundles (metrics, eval tables, writeup, judge readme, checksums).
-- `assets/` — cover image and any redacted sample inputs.
+- `submission_writeup_draft.md` — hackathon write-up draft with project links and evaluation summary.
+- `requirements.txt` — local dependencies for the validator/notebook-generation path.
 - `LICENSE` — Apache 2.0.
+
+Generated Kaggle outputs, local verification folders, virtual environments, logs, zips, and redacted medical-report images are intentionally ignored so the public repo stays small and does not expose sensitive sample inputs.
 
 ## Reproducing
 
 ```bash
-pip install -r requirements.txt            # or install transformers==5.5.3, huggingface_hub, hf_transfer, gradio, pytesseract, etc.
-python build_notebook_v19.py                # regenerate the ipynb
-python _validate_eval.py                    # CPU-safe deterministic validation
-cd kaggle_v19_run && kaggle kernels push -p .   # push to Kaggle (requires configured kaggle CLI)
+pip install -r requirements.txt
+python build_notebook_v19.py
+python _validate_eval.py
 ```
 
-On Kaggle, open the notebook, **Run all**, and wait for a T4 allocation for the full multimodal path. The export cell writes a timestamped ZIP under `/kaggle/working/medivoice_v19_outputs_*.zip`.
+On Kaggle, open the notebook, attach the Gemma 4 model input or set `HF_TOKEN` in Kaggle Secrets, choose a T4/T4x2 GPU when available, then **Run all**. The export cell writes a timestamped ZIP under `/kaggle/working/medivoice_v19_outputs_*.zip`.
 
 ## Disclaimer
 

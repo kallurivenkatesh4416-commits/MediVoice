@@ -5,13 +5,15 @@
 - **Demo video:** *(to be added before submission)*
 - **License:** Apache 2.0
 
-MediVoice is a safety-first lab-report companion for people who receive results outside a clinic and need a calm, trustworthy explanation before they can reach a clinician. A user uploads a photo of a lab report, MediVoice reads the report with **Gemma 4 multimodal input as the primary reader**, falls back to OCR when Gemma's read is weak, converts the extracted rows into structured lab values, applies a **deterministic Python safety layer** for classification and escalation, and then uses Gemma 4 again to produce a plain-English explanation with a fixed medical disclaimer. The goal is not to replace a doctor. The goal is to reduce confusion, surface urgency safely, and make lab results more understandable for patients, caregivers, and community health workers.
+MediVoice is a safety-first lab-report and voice-assistant companion for people who receive results outside a clinic and need a calm, trustworthy explanation before they can reach a clinician. A user uploads a photo of a lab report, MediVoice reads the report with **Gemma 4 multimodal input as the primary reader**, falls back to OCR when Gemma's read is weak, converts the extracted rows into structured lab values, applies a **deterministic Python safety layer** for classification and escalation, and then uses Gemma 4 again to produce a plain-English explanation with a fixed medical disclaimer.
+
+The notebook also includes a **Voice Chat** path. A patient can speak a symptom question or follow-up, MediVoice transcribes the audio through Gemma-native audio when available or Whisper fallback when needed, checks emergency guardrails, and returns a structured, plain-language response. The goal is not to replace a doctor. The goal is to reduce confusion, surface urgency safely, and make lab results and health questions more understandable for patients, caregivers, and community health workers.
 
 This project fits three tracks directly:
 
 - **Health & Sciences:** it focuses on CBC, CMP, and common chemistry/electrolyte-style reports, where patients often see dense tables before they get a callback.
 - **Safety & Trust:** life-threatening decisions do not depend on free-form generation. Critical values, clarification rules, pregnancy refusal, and flag-mismatch detection are all handled by deterministic code.
-- **Digital Equity & Inclusivity:** the interface supports large-print mode, multilingual output, voice input, and a calm explanation style designed for non-clinical readers.
+- **Digital Equity & Inclusivity:** the interface supports large-print mode, multilingual output, microphone/uploaded audio, voice-chat follow-ups, and a calm explanation style designed for non-clinical readers.
 
 ## Why Gemma 4 specifically
 
@@ -40,6 +42,12 @@ MediVoice follows a four-stage pipeline:
    Gemma 4 produces a short plain-English explanation grounded in the structured results and the deterministic decision layer. The fixed disclaimer remains present in every output.
 
 This separation is the main design choice of the project: **Gemma handles perception and explanation, while safety-critical decisions remain deterministic.**
+
+The demo exposes three judge-facing tabs:
+
+- **Lab Report:** upload or select sample CBC/CMP-style report images.
+- **Voice Chat:** ask medical education questions by microphone/audio upload or text, with emergency guardrails.
+- **Eval Dashboard:** inspect deterministic metrics, multilingual validation, and safe-failure evidence.
 
 ## What the latest clean T4 run shows
 
@@ -100,7 +108,7 @@ MediVoice is designed to reduce friction for non-expert users:
 
 - multilingual output with preserved safety text
 - large-print mode
-- voice input path
+- voice assistant path for spoken questions and follow-ups
 - calm, companion-style explanations
 - open-weight, local-first model stack rather than external inference APIs
 

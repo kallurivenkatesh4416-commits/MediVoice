@@ -15,6 +15,9 @@ import types
 
 
 def install_stubs() -> None:
+    # The Kaggle notebook imports optional packages that are not needed for the
+    # deterministic safety checks. Lightweight stubs keep this local harness
+    # focused on the decision layer instead of failing on demo-only dependencies.
     if "textstat" not in sys.modules:
         textstat_stub = types.ModuleType("textstat")
         textstat_stub.flesch_kincaid_grade = lambda text: 6.0  # type: ignore[attr-defined]
@@ -23,12 +26,17 @@ def install_stubs() -> None:
 
     if "whisper" not in sys.modules:
         whisper_stub = types.ModuleType("whisper")
+
         def _missing(*args, **kwargs):  # noqa: ANN001, D401
             raise RuntimeError("whisper stub - not installed locally")
+
         whisper_stub.load_model = _missing  # type: ignore[attr-defined]
         sys.modules["whisper"] = whisper_stub
 
     import torch  # noqa: I001
+
+    # Force the same CPU-smoke path reviewers can run on ordinary machines.
+    # GPU-only Gemma proof rows are expected to be populated from Kaggle T4 runs.
     torch.cuda.is_available = lambda: False  # type: ignore[assignment]
     try:
         torch.cuda.is_bf16_supported = lambda: False  # type: ignore[assignment]
@@ -58,6 +66,8 @@ def run() -> int:
             skipped_reasons.append((idx, "pip install cell"))
             continue
 
+        # A local compile/validation run should not try to mutate the active
+        # PyTorch install. The notebook itself keeps that repair path for Kaggle.
         if "CUDA-enabled PyTorch" in source:
             skipped_reasons.append((idx, "CUDA repair cell"))
             continue
@@ -100,6 +110,8 @@ def run() -> int:
             "ped_cbc_neutropenia",
             "ped_cmp_bun_coverage_gap",
         ]
+        # These adversarial cases protect the submission from accidental
+        # simplification of the hard safety examples.
         for cid in required:
             if cid not in case_ids:
                 failures.append(f"eval_corpus missing adversarial case {cid}")
