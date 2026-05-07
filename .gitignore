@@ -1,0 +1,27 @@
+# Python / notebook caches
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Local environments and app state
+.venv/
+.gradio/
+.env
+
+# Kaggle/local generated outputs
+kaggle_output*/
+kaggle_pull*/
+kaggle_run/
+kaggle_v19_run/
+local_verify*/
+medivoice_local_working*/
+temp_kaggle_output*/
+
+# Generated or bulky artifacts
+*.zip
+*.log
+notebook output.pdf
+
+# Potentially sensitive sample inputs
+redacted-reports/
+
