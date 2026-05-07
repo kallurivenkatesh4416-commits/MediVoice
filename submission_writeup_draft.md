@@ -1,7 +1,7 @@
 # MediVoice: Plain-English Lab Report Companion Powered by Gemma 4
 
 - **Kaggle notebook:** https://www.kaggle.com/code/kallurivenkatesh4416/medivoice-gemma-4-v19-lab-report
-- **GitHub repo:** *(to be added before submission)*
+- **GitHub repo:** https://github.com/kallurivenkatesh4416-commits/MediVoice
 - **Demo video:** *(to be added before submission)*
 - **License:** Apache 2.0
 
